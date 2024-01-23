@@ -1,8 +1,9 @@
 import os
 import openai
+from dotenv import load_dotenv
 
 #openai.api_key = os.getenv("E:\Programs\Git\OpenAI\openai-quickstart-python\.env")
-#openai.api_key = "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"
+#openai.api_key = "????"
 #openai.api_key = os.getenv("OPENAI_API_KEY")
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
