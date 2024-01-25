@@ -1,39 +1,29 @@
 import os
 import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 
-#openai.api_key = os.getenv("E:\Programs\Git\OpenAI\openai-quickstart-python\.env")
-#openai.api_key = "????"
-#openai.api_key = os.getenv("OPENAI_API_KEY")
+load_dotenv()
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY_AGI"),
+    base_url=os.getenv("OPENAI_BASE_URL")
+)
+print(openai.__version__)
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-response = openai.Completion.create(
-    model="text-davinci-003",
-    prompt="Say this is a test",
-    temperature=0,
-    max_tokens=5
+response = client.completions.create(
+    # model="text-davinci-004",
+    model="gpt-3.5-turbo-instruct",
+    prompt="你好",
+    # streams="true",
+    # temperature=0,
+    # max_tokens=5,
+    # messages=[
+    #     {
+    #         "role": "user",
+    #         "content": "你好"
+    #     }
+    # ],
 )
 
 print(response)
-
-
-"""
-C# / .NET
-Crystal
-Go
-Java
-Kotlin
-Node.js
-PHP
-Python
-R
-Ruby
-Scala
-Swift
-Unity
-Unreal Engine
-
-24个库
-"""
 
