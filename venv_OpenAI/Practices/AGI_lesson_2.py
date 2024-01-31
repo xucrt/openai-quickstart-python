@@ -1,3 +1,4 @@
+# 2.4.1、实现一个 NLU
 import os
 from openai import OpenAI
 
@@ -6,13 +7,16 @@ from dotenv import load_dotenv, find_dotenv
 _ = load_dotenv(find_dotenv())
 
 # 初始化 OpenAI 客户端 ???不知为何，这段代码无法正确调用API Key???
-# client = OpenAI()  # 默认使用环境变量中的 OPENAI_API_KEY 和 OPENAI_BASE_URL
+# 2024/1/31 修改.env之后需要关闭PyCharm一次，这样load_dotenv(find_dotenv())才能将到修改过的参数添加到现在的运行环境中。
 
 # 初始化 OpenAI 客户端
-client = OpenAI(
-    api_key = os.getenv("OPENAI_API_KEY_AGI"),
-    base_url = os.getenv("OPENAI_BASE_URL")
-)
+client = OpenAI()  # 默认使用环境变量中的 OPENAI_API_KEY 和 OPENAI_BASE_URL
+
+# 初始化 OpenAI 客户端，另一种方法
+# client = OpenAI(
+#     api_key = os.getenv("OPENAI_API_KEY_AGI"),
+#     base_url = os.getenv("OPENAI_BASE_URL")
+# )
 
 # 基于 prompt 生成文本的函数
 def get_completion(prompt, model_d="gpt-3.5-turbo"):    # 默认使用 gpt-3.5-turbo 模型
