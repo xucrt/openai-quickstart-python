@@ -5,6 +5,8 @@
 # 3. 封装检索接口
 # 4. 构建调用流程：Query -> 检索 -> Prompt -> LLM -> 回复
 
+"""
+↓↓↓↓ 20240314 移至classes ↓↓↓↓
 # 1、文档的加载与切割
 # 需要先安装 pdf 解析库
 # pip install pdfminer.six
@@ -35,6 +37,7 @@ def extract_text_from_pdf(filename, page_numbers=None, min_line_length=1):
     if buffer:
         paragraphs.append(buffer)
     return paragraphs
+"""
 
 paragraphs_dell = extract_text_from_pdf("../materials/h15201-data-protector-for-z-systems-zdp-essentials.pdf", page_numbers=[1], min_line_length=2)
 paragraphs_telus = extract_text_from_pdf("../materials/TELUS_Contributor Agreement_Media Search.pdf",  page_numbers=[1], min_line_length=2)
@@ -50,6 +53,8 @@ paragraphs_vmware = extract_text_from_pdf("../materials/vmware-vsphere-80-releas
 # for para in paragraphs_vmware[:5]:
 #     print(para+"\n")
 
+"""
+↓↓↓↓ 20240314 移至classes ↓↓↓↓
 # 安装NLTK（文本处理方法库）↓
 # pip install nltk
 
@@ -62,11 +67,10 @@ import re
 # 'punkt'和'stopwords'只需在本地安装一次。
 # nltk.download('punkt')  # 英文切词、词根、切句等方法
 # nltk.download('stopwords')  # 英文停用词库
-
 # 文本处理
 class TextKeywordExtractor:
     def __init__(self):
-        """初始化停用词和词干提取器"""
+        # 初始化停用词和词干提取器
         self.stop_words = set(stopwords.words('english'))
         self.ps = PorterStemmer()
     def to_keywords(self, input_string):
@@ -81,6 +85,7 @@ class TextKeywordExtractor:
         filtered_sentence = [ps.stem(w)
                              for w in word_tokens if not w.lower() in stop_words]
         return ' '.join(filtered_sentence)
+"""
 
 """
 20:39 2024/03/11
@@ -93,6 +98,7 @@ xxx！！！注意！！！ 不能将结果转换为【字符串】并连接！�
 所以正确的文本结合方式是，直接将列表结合↓↓↓↓，而不是转换成文字列。
 # paragraphs = paragraphs_dell + paragraphs_telus + paragraphs_vmware
 """
+
 
 paragraphs = paragraphs_dell + paragraphs_telus + paragraphs_vmware
 

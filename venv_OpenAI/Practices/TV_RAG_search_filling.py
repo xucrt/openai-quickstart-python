@@ -38,22 +38,13 @@ es = Elasticsearch(
 # index_name = "xuc_index_t0308"
 index_name = "xuc_index_t0311"
 
+# ↓↓↓↓ 20240314 移至classes ↓↓↓↓
 # 3. 如果索引已存在，删除它。!!!!危险命令!!!!
 # if es.indices.exists(index=index_name):
 #     es.indices.delete(index=index_name)
 
 # 4. 创建索引，一个库(Index)只需执行一次。
 es.indices.create(index=index_name)
-
-from nltk.stem import PorterStemmer
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
-import nltk
-import re
-
-# 'punkt'和'stopwords'只需在本地安装一次。
-# nltk.download('punkt')  # 英文切词、词根、切句等方法
-# nltk.download('stopwords')  # 英文停用词库
 
 # 5. 灌库指令
 extractor = TextKeywordExtractor()
@@ -63,6 +54,8 @@ print("==========我是分割线 灌库前的文本===========")
 for para in paragraphs[0-3]:
     print(extractor.to_keywords(para))
 
+"""
+↓↓↓↓ 20240314 移至classes ↓↓↓↓
 actions = [
     {
         "_index": index_name,
@@ -78,3 +71,4 @@ actions = [
 test_ku = helpers.bulk(es, actions)
 print("==========我是分割线 灌库结果===========")
 print(test_ku)
+"""

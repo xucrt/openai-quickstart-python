@@ -6,7 +6,6 @@
 # 4. 构建调用流程：Query -> 检索 -> Prompt -> LLM -> 回复
 
 # 2-2、实现关键字检索
-
 from elasticsearch7 import Elasticsearch, helpers
 from dotenv import load_dotenv, find_dotenv
 import os
