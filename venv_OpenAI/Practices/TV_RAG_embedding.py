@@ -5,8 +5,7 @@
 # 3. 封装检索接口
 # 4. 构建调用流程：Query -> 检索 -> Prompt -> LLM -> 回复
 
-"""
-↓↓↓↓ 20240314 移至classes ↓↓↓↓
+# ↓↓↓↓ 20240314 移至classes ↓↓↓↓
 # 1、文档的加载与切割
 # 需要先安装 pdf 解析库
 # pip install pdfminer.six
@@ -37,11 +36,10 @@ def extract_text_from_pdf(filename, page_numbers=None, min_line_length=1):
     if buffer:
         paragraphs.append(buffer)
     return paragraphs
-"""
 
-paragraphs_dell = extract_text_from_pdf("../materials/h15201-data-protector-for-z-systems-zdp-essentials.pdf", page_numbers=[1], min_line_length=2)
-paragraphs_telus = extract_text_from_pdf("../materials/TELUS_Contributor Agreement_Media Search.pdf",  page_numbers=[1], min_line_length=2)
-paragraphs_vmware = extract_text_from_pdf("../materials/vmware-vsphere-80-release-notes.pdf",  page_numbers=[1], min_line_length=2)
+paragraphs_dell = extract_text_from_pdf(f"E:/Programs/materials/h15201-data-protector-for-z-systems-zdp-essentials.pdf", page_numbers=[1], min_line_length=2)
+# paragraphs_telus = extract_text_from_pdf("../materials/TELUS_Contributor Agreement_Media Search.pdf",  page_numbers=[1], min_line_length=2)
+# paragraphs_vmware = extract_text_from_pdf("../materials/vmware-vsphere-80-release-notes.pdf",  page_numbers=[1], min_line_length=2)
 
 # print("==========我是分割线 PDF抽取结果↓↓↓===========")
 # for para in paragraphs_dell[:5]:
@@ -100,7 +98,9 @@ xxx！！！注意！！！ 不能将结果转换为【字符串】并连接！�
 """
 
 
-paragraphs = paragraphs_dell + paragraphs_telus + paragraphs_vmware
+# paragraphs = paragraphs_dell + paragraphs_telus + paragraphs_vmware
+paragraphs = paragraphs_dell
+print(paragraphs[0-15])
 
 paragraphs.append("\n\n==========完了===========")
 print(type(paragraphs))

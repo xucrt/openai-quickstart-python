@@ -20,7 +20,7 @@ _ = load_dotenv(find_dotenv())
 
 # 【import TV_RAG_embedding.py】导入时必须去掉扩展名。
 from TV_RAG_embedding import paragraphs
-from TV_RAG_embedding import TextKeywordExtractor
+from TV_1_RAG_classes import TextKeywordExtractor
 
 # 从环境变量获取配置信息
 es_host = os.environ.get("ES_HOST")
@@ -36,7 +36,7 @@ es = Elasticsearch(
 
 # 2. 定义索引名称
 # index_name = "xuc_index_t0308"
-index_name = "xuc_index_t0311"
+index_name = "xuc_index_t0323"
 
 # ↓↓↓↓ 20240314 移至classes ↓↓↓↓
 # 3. 如果索引已存在，删除它。!!!!危险命令!!!!
@@ -54,8 +54,8 @@ print("==========我是分割线 灌库前的文本===========")
 for para in paragraphs[0-3]:
     print(extractor.to_keywords(para))
 
-"""
-↓↓↓↓ 20240314 移至classes ↓↓↓↓
+# """
+# ↓↓↓↓ 20240314 移至classes ↓↓↓↓
 actions = [
     {
         "_index": index_name,
@@ -71,4 +71,4 @@ actions = [
 test_ku = helpers.bulk(es, actions)
 print("==========我是分割线 灌库结果===========")
 print(test_ku)
-"""
+# """

@@ -5,16 +5,44 @@
 # 3. 封装检索接口
 # 4. 构建调用流程：Query -> 检索 -> Prompt -> LLM -> 回复
 
+from dotenv import load_dotenv, find_dotenv
+import os
+
+# 从环境变量获取配置信息
+es_host = os.environ.get("ES_HOST")
+es_username = os.environ.get("ES_USERNAME")
+es_password = os.environ.get("ES_PASSWORD")
+
+# 0. 整理文件名
+class FileNameModifier:
+    def __init__(self, directory):
+        '''初始化文件名修改器，设置工作目录'''
+        self.directory = directory
+
+    def replace_spaces_with_underscores(self):
+        '''将目录下的所有文件名中的空格替换为下划线'''
+        # 遍历目录下的所有文件
+        for filename in os.listdir(self.directory):
+            if ' ' in filename:
+                new_filename = filename.replace(' ', '_')
+                # 构建原始文件和新文件的完整路径
+                original_path = os.path.join(self.directory, filename)
+                new_path = os.path.join(self.directory, new_filename)
+                # 重命名文件
+                os.rename(original_path, new_path)
+                print(f"Renamed '{filename}' to '{new_filename}'")
+
 # 1. 文档加载，并按一定条件切割成片段
 # 1-1、文档切割－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
 # 需要先安装 pdf 解析库
 # pip install pdfminer.six
 
-# from pdfminer.high_level import extract_pages
-# from pdfminer.layout import LTTextContainer
+from pdfminer.high_level import extract_pages
+from pdfminer.layout import LTTextContainer
 
 class PDFTextExtractor:
     def __init__(self, filename, page_numbers=None, min_line_length=1):
+        '''从 PDF 文件中（按指定页码）提取文字'''
         self.filename = filename
         self.page_numbers = page_numbers
         self.min_line_length = min_line_length
@@ -23,14 +51,14 @@ class PDFTextExtractor:
         paragraphs = []
         buffer = ''
         full_text = ''
-
+        # 提取全部文本
         for i, page_layout in enumerate(extract_pages(self.filename)):
             if self.page_numbers is not None and i not in self.page_numbers:
                 continue
             for element in page_layout:
                 if isinstance(element, LTTextContainer):
                     full_text += element.get_text() + '\n'
-
+        # 按空行分隔，将文本重新组织成段落
         lines = full_text.split('\n')
         for text in lines:
             if len(text) >= self.min_line_length:
@@ -47,11 +75,11 @@ class PDFTextExtractor:
 # 安装NLTK（文本处理方法库）↓
 # pip install nltk
 
-# from nltk.stem import PorterStemmer
-# from nltk.tokenize import word_tokenize
-# from nltk.corpus import stopwords
-# import nltk
-# import re
+from nltk.stem import PorterStemmer
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+import nltk
+import re
 
 # 'punkt'和'stopwords'只需在本地安装一次。
 # nltk.download('punkt')  # 英文切词、词根、切句等方法
