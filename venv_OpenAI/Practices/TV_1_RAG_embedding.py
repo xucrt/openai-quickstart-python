@@ -1,3 +1,10 @@
+# Lesson 5. RAG 系统的基本搭建流程
+# 搭建过程：
+# 1. 文档加载，并按一定条件切割成片段--参考AGI_lesson_5-1.py or TV_RAG_embedding.py
+# 2. 将切割的文本片段灌入检索引擎
+# 3. 封装检索接口
+# 4. 构建调用流程：Query -> 检索 -> Prompt -> LLM -> 回复
+
 # 1、文档的加载与切割
 # 需要先安装 pdf 解析库
 # pip install pdfminer.six

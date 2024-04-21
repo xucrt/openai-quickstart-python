@@ -5,14 +5,6 @@
 # 3. 封装检索接口
 # 4. 构建调用流程：Query -> 检索 -> Prompt -> LLM -> 回复
 
-from dotenv import load_dotenv, find_dotenv
-import os
-
-# 从环境变量获取配置信息
-es_host = os.environ.get("ES_HOST")
-es_username = os.environ.get("ES_USERNAME")
-es_password = os.environ.get("ES_PASSWORD")
-
 # 0. 整理文件名
 class FileNameModifier:
     def __init__(self, directory):
@@ -106,12 +98,12 @@ class TextKeywordExtractor:
 
 
 # 2-1、Index管理－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
-# from dotenv import load_dotenv, find_dotenv
-# import os
-# import sys
-#
-# # 加载环境变量
-# _ = load_dotenv(find_dotenv())
+from dotenv import load_dotenv, find_dotenv
+import os
+import sys
+
+# 加载环境变量
+_ = load_dotenv(find_dotenv())
 
 class ElasticsearchMgr:
     def __init__(self):
@@ -144,14 +136,16 @@ class ElasticsearchMgr:
 
 
 # 2-2、灌库－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
-# from elasticsearch7 import Elasticsearch, helpers
-# from TV_RAG_classes import TextKeywordExtractor
+from elasticsearch7 import Elasticsearch, helpers
 
 class ElasticsearchBulkInserter:
-    def __init__(self, es_host, es_username, es_password, index_name):
+    def __init__(self, index_name):
+        self.es_host = os.environ.get("ES_HOST")
+        self.es_username = os.environ.get("ES_USERNAME")
+        self.es_password = os.environ.get("ES_PASSWORD")
         self.es = Elasticsearch(
-            hosts=[es_host],
-            http_auth=(es_username, es_password),
+            hosts=[self.es_host],
+            http_auth=(self.es_username, self.es_password),
         )
         self.index_name = index_name
         self.extractor = TextKeywordExtractor()  # 实例化你的关键字提取器
@@ -174,19 +168,19 @@ class ElasticsearchBulkInserter:
 
 
 # 3. 封装检索接口－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
-# from elasticsearch7 import Elasticsearch, helpers
-# from TV_RAG_classes import TextKeywordExtractor
-
 class ElasticsearchSearcher:
-    def __init__(self, es_host, es_username, es_password, index_name):
+    def __init__(self, index_name):
+        self.es_host = os.environ.get("ES_HOST")
+        self.es_username = os.environ.get("ES_USERNAME")
+        self.es_password = os.environ.get("ES_PASSWORD")
         self.es = Elasticsearch(
-            hosts=[es_host],
-            http_auth=(es_username, es_password),
+            hosts=[self.es_host],
+            http_auth=(self.es_username, self.es_password),
         )
         self.index_name = index_name
         self.extractor = TextKeywordExtractor()  # 实例化你的关键字提取器
 
-    def search(self, query_string, top_n=10):
+    def search(self, query_string, top_n=100):
         # 使用关键字提取器处理查询字符串
         search_query = {
             "match": {
@@ -197,4 +191,43 @@ class ElasticsearchSearcher:
         print("==========我是分割线 in search, match KW ===========")
         print(res)
         return [hit["_source"]["text"] for hit in res["hits"]["hits"]]
+
+
+# 3.3、LLM 接口封装－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
+from openai import OpenAI
+client = OpenAI()
+
+class OpenAICompletion:
+    def __init__(self, model="gpt-4-1106-vision-preview"):
+    # def __init__(self, model="gpt-4-turbo-2024-04-09"): 效果不太好
+        '''Initialize the OpenAI model to be used for completions.'''
+        self.model = model
+
+    def get_completion(self, prompt, temperature=0):
+        '''Fetch completion from OpenAI API for a given prompt using the specified model.'''
+        messages = [{"role": "user", "content": prompt}]
+        response = client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            temperature=temperature,  # Control the randomness of the output, 0 for least random
+        )
+        return response.choices[0].message.content
+
+class PromptBuilder:
+    def __init__(self, template):
+        '''Initialize with a prompt template.'''
+        self.template = template
+
+    def build_prompt(self, **kwargs):
+        '''Replace placeholders in the template based on provided keyword arguments.'''
+        prompt = self.template
+        for k, v in kwargs.items():
+            if isinstance(v, str):
+                val = v
+            elif isinstance(v, list) and all(isinstance(elem, str) for elem in v):
+                val = '\n'.join(v)
+            else:
+                val = str(v)
+            prompt = prompt.replace(f"__{k.upper()}__", val)
+        return prompt
 
